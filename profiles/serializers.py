@@ -9,6 +9,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     Providing readability to profile data in API.
     """
     owner = serializers.ReadOnlyField(source='owner.username')
+    is_owner = serializers.SerializerMethodField()
+
+    def get_is_owner(self, obj):
+        request = self.context['request']
+        return request.user == obj.owner
 
     class Meta:
         """
@@ -24,4 +29,5 @@ class ProfileSerializer(serializers.ModelSerializer):
             'image',
             'description',
             'place',
+            'is_owner',
         ]
