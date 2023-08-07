@@ -3,7 +3,7 @@ from rest_framework import serializers
 from likes.models import Like
 
 
-# Class provided by DRF-API walkthrough.
+# Class taken from DRF-API walkthrough.
 class LikeSerializer(serializers.ModelSerializer):
     """
     Likes model serializer.

@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions
-from p5_drf_api.permissions import IsOwnerOrReadOnly
+from petsroom_drf_api.permissions import IsOwnerOrReadOnly
 from .models import Follower
 from .serializers import FollowerSerializer
 

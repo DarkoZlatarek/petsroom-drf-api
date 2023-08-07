@@ -1,10 +1,10 @@
 from rest_framework import generics, permissions
-from p5_drf_api.permissions import IsOwnerOrReadOnly
+from petsroom_drf_api.permissions import IsOwnerOrReadOnly
 from likes.models import Like
 from likes.serializers import LikeSerializer
 
 
-# Class provided by DRF-API walkthrough.
+# Class taken from DRF-API walkthrough.
 class LikeList(generics.ListCreateAPIView):
     """
     Logged in users is able
@@ -22,7 +22,7 @@ class LikeList(generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 
-# Class provided by DRF-API walkthrough.
+# Class taken from DRF-API walkthrough.
 class LikeDetail(generics.RetrieveDestroyAPIView):
     """
     The ability to create/delete

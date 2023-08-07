@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from posts.models import Post
 
 
-# Class provided by DRF-API walkthrough.
+# Class taken from DRF-API walkthrough.
 class Like(models.Model):
     """
     Likes Model.
