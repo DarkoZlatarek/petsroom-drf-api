@@ -31,7 +31,7 @@ class PostListViewTests(APITestCase):
 class PostDetailViewTests(APITestCase):
     def setUp(self):
         rob = User.objects.create_user(username='rob', password='pass')
-        nick = User.objects.create_user(username='nick', password='pass')        
+        nick = User.objects.create_user(username='nick', password='pass')
         Post.objects.create(
             owner=rob, title='rob title', content='Robs post'
         )
