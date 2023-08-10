@@ -12,13 +12,6 @@ class ArticleList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Article.objects.all()
 
-    def perform_create(self, serializer):
-        """
-        Aave article if
-        user is authenticated.
-        """
-        serializer.save(owner=self.request.user)
-
     filter_backends = [
         filters.SearchFilter,
     ]
@@ -28,11 +21,18 @@ class ArticleList(generics.ListCreateAPIView):
         'title',
     ]
 
+    def perform_create(self, serializer):
+        """
+        Save article if
+        user is authenticated.
+        """
+        serializer.save(owner=self.request.user)
+
 
 class ArticleDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update and delete article.
     """
     serializer_class = ArticleSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
     queryset = Article.objects.all()
