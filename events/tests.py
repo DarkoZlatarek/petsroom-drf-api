@@ -16,12 +16,14 @@ class EventListViewTests(APITestCase):
         print(response.data)
         print(len(response.data))
 
-    # def test_logged_in_user_can_create_an_event(self):
-    #     self.client.login(username='rob', password='pass')
-    #     response = self.client.post('/events/', {'title': 'a title'})
-    #     count = Event.objects.count()
-    #     self.assertEqual(count, 1)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_logged_in_user_can_create_an_event(self):
+        self.client.login(username='rob', password='pass')
+        response = self.client.post(
+            '/events/', {'title': 'a title', 'place': 'my place'}
+        )
+        count = Event.objects.count()
+        self.assertEqual(count, 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_user_not_logged_in_cant_create_event(self):
         response = self.client.post('/events/', {'title': 'a title'})
@@ -48,14 +50,18 @@ class EventDetailViewTests(APITestCase):
         response = self.client.get('/posts/3/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    # def test_user_can_update_own_event(self):
-    #     self.client.login(username='rob', password='pass')
-    #     response = self.client.put('/events/1/', {'title': 'a new title'})
-    #     event = Event.objects.first()
-    #     self.assertEqual(event.title, 'a new title')
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    def test_user_can_update_own_event(self):
+        self.client.login(username='rob', password='pass')
+        response = self.client.put(
+            '/events/1/', {'title': 'a new title', 'place': 'my place'}
+        )
+        event = Event.objects.first()
+        self.assertEqual(event.title, 'a new title')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     # def test_user_cant_update_event_they_dont_own(self):
     #     self.client.login(username='rob', password='pass')
-    #     response = self.client.put('/events/2/', {'title': 'a new title'})
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    #     response = self.client.put(
+    #         '/events/2/', {'title': 'a new title', 'place': 'my place'}
+    #     )
+    #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
