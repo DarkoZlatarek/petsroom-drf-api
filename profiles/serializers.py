@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Profile
+from followers.models import Follower
 
 
 # Class provided by DRF-API walkthrough.
@@ -21,7 +22,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_following_id(self, obj):
         """
-        Returns following count for individual user
+        Returns following count for the user
         """
         user = self.context['request'].user
         if user.is_authenticated:
