@@ -13,16 +13,30 @@ class EventList(generics.ListCreateAPIView):
     """
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = Event.objects.all()
+
+    queryset = Event.objects.annotate(
+        eventcomments_count=Count('eventcomment')
+    ).order_by('-created_on')
 
     filter_backends = [
+        filters.OrderingFilter,
         filters.SearchFilter,
+        DjangoFilterBackend,
+    ]
+
+    filterset_fields = [
+        'owner__followed__owner__profile',
+        'owner__profile',
     ]
 
     search_fields = [
         'owner__username',
         'title',
         'place',
+    ]
+
+    ordering_fields = [
+        'eventcomments_count',
     ]
 
     def perform_create(self, serializer):
@@ -38,4 +52,7 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     serializer_class = EventSerializer
     permission_classes = [IsOwnerOrReadOnly]
-    queryset = Event.objects.all()
+
+    queryset = Event.objects.annotate(
+        eventcomments_count=Count('eventcomment')
+    ).order_by('-created_on')
