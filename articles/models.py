@@ -9,7 +9,7 @@ class Article(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=300)
     content = models.TextField(blank=False)
-    article_link = models.URLField('Event URL', max_length=400, blank=True)
+    article_link = models.URLField('Event URL', blank=False)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
 
