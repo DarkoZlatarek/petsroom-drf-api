@@ -9,9 +9,9 @@ class Event(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     place = models.CharField(max_length=50)
-    content = models.TextField(blank=True)
-    date = models.DateField(null=True, blank=True)
-    time = models.TimeField(null=True, blank=True)
+    content = models.TextField(blank=False)
+    date = models.DateField(null=True, blank=False)
+    time = models.TimeField(null=True, blank=False)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
 
