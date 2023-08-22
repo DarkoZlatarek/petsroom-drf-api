@@ -19,7 +19,7 @@ class EventCommentList(generics.ListCreateAPIView):
     ]
 
     filterset_fields = [
-        'event',
+        'eventpost',
     ]
 
     def perform_create(self, serializer):

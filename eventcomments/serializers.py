@@ -45,7 +45,7 @@ class EventCommentSerializer(serializers.ModelSerializer):
             'is_owner',
             'profile_id',
             'profile_image',
-            'event',
+            'eventpost',
             'created_on',
             'modified_on',
             'content',
@@ -57,4 +57,4 @@ class EventCommentDetailSerializer(EventCommentSerializer):
     """
     Serializer for event comment detail view.
     """
-    event = serializers.ReadOnlyField(source='event.id')
+    eventpost = serializers.ReadOnlyField(source='eventpost.id')
