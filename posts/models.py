@@ -8,26 +8,24 @@ class Post(models.Model):
     """
     Posts Model related to Owner/User.
     """
-    dog_breed_choices = [
-        ('german_shepherd', 'German Shepherd'),
-        ('bulldog', 'Bulldog'),
-        ('labrador_retriever', 'Labrador Retriever'),
-        ('golden_retriever', 'Golden Retriever'),
-        ('french_bulldog', 'French Bulldog'),
-        ('siberian_husky', 'Siberian Husky'),
-        ('alaskan_malamute', 'Alaskan Malamute'),
-        ('poodle', 'Poodle'),
-        ('chihuahua', 'Chihuahua'),
-        ('border_collie', 'Border Collie'),
-        ('dachshund', 'Dachshund'),
-        ('terrier', 'Terrier'),
-        ('rottweiler', 'Rottweiler'),
-        ('australian_shepherd', 'Australian Shepherd'),
-        ('bichon_frisé', 'Bichon Frisé'),
-        ('chow_chow', 'Chow Chow'),
-        ('pomeranian', 'Pomeranian'),
-        ('cavalier_king_charles_spaniel', 'Cavalier King Charles Spaniel'),
-        ('english_cocker_spaniel', 'English Cocker Spaniel'),
+    pet_choices = [
+        ('dog', 'dog'),
+        ('cat', 'cat'),
+        ('rabbit', 'rabbit'),
+        ('hamster', 'hamster'),
+        ('bird', 'bird'),
+        ('ferret', 'ferret'),
+        ('reptile', 'reptile'),
+        ('fish', 'fish'),
+        ('horse', 'horse'),
+        ('spider', 'spider'),
+        ('frog', 'frog'),
+        ('gerbil', 'gerbil'),
+        ('chicken', 'chicken'),
+        ('duck', 'duck'),
+        ('cow', 'cow'),
+        ('pig', 'pig'),
+        ('guinea_pig', 'guinea pig'),
     ]
 
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -40,10 +38,11 @@ class Post(models.Model):
         default='../default_post_image_rwq55u',
         blank=True
     )
-    dog_breed = models.CharField(
+    pet = models.CharField(
         max_length=30,
-        choices=dog_breed_choices,
-        default='none'
+        choices=pet_choices,
+        default='none',
+        blank=False
     )
 
     class Meta:

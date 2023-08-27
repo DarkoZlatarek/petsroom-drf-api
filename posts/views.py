@@ -34,6 +34,7 @@ class PostList(generics.ListCreateAPIView):
     search_fields = [
         'owner__username',
         'title',
+        'pet',
     ]
 
     ordering_fields = [
