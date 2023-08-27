@@ -74,7 +74,7 @@ class PostSerializer(serializers.ModelSerializer):
             'title',
             'content',
             'image',
-            'dog_breed',
+            'pet',
             'like_id',
             'likes_count',
             'comments_count',
