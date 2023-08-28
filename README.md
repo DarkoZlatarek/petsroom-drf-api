@@ -21,8 +21,6 @@ DEPLOYED FRONTEND - [GITHUB-REPOSITORY](https://github.com/DarkoZlatarek/project
     * [Frameworks, Libraries & Programs Used](#frameworks)
 * [Deployment](#deployment)
 * [Credits](#credits)
-    * [Content](#content)
-    * [Media](#media)
 
 
 ## **User Stories**<span id="user-stories"><span>
@@ -90,11 +88,206 @@ All files passed through [CI Python Linter](https://pep8ci.herokuapp.com/) witho
 
 ## **Deployment**<span id="deployment"><span>
 
+### Creating the project:
+1. Create the GitHub repository.
+2. Create the project app on Heroku.
+3. Add the Postgres package to the Heroku app.
+4. Once the GitHub repository was launched on GitPod, installed the following packages in terminal with install command:
+```
+'django<4'
+django-cloudinary-storage
+Pillow
+djangorestframework
+django-filter
+dj-rest-auth==2.1.9
+'dj-rest-auth[with_social]'
+djangorestframework-simplejwt
+dj_database_url==0.5.0 psycopg2
+gunicorn django-cors-headers
+whitenoise
+```
+
+5. Created the Django project with the following command:
+```
+django-admin startproject project_name .
+```
+
+6. Back in Heroku, and under the Settings tab, added the following configvars:
+    * Key: SECRET_KEY | Value: hidden
+    * Key: CLOUDINARY_URL | Value: cloudinary://hidden
+    * Key: DISABLE_COLLECTSTATIC | Value: 1
+    * Key: ALLOWED_HOST | Value: drf-api-app-name.herokuapp.com
+
+7. 0nce the ReactApp has been created added two additional configvars:
+    * Key: CLIENT_ORIGIN | Value: https://react-app-name.herokuapp.com
+    * Key: CLIENT_ORIGIN_DEV | Value: https://gitpod-browser-link.ws-eu54.gitpod.io
+        * Check that the trailing slash "/" at the end of both links has been removed.
+        * Gitpod occasionally updates the browser preview link. Tthe CLIENT_ORIGIN_DEV value then0 needs to be updated for development purposes.
+
+8. Created the env.py file, and added the following variables. The value for DATABASE_URL was obtained from the Heroku configvars in the previous step:
+```
+import os`
+os.environ['CLOUDINARY_URL'] = 'cloudinary://hidden'
+os.environ['DATABASE_URL'] = 'postgres://hidden'
+os.environ['SECRET_KEY'] = 'secret-key-of-mine'
+os.environ['CLIENT_ORIGIN'] = 'https://8000-darkozlatar-djangorestf-hidden'
+# os.environ['DEV'] = '1'
+```
+
+### Settings.py:
+
+9.  Update INSTALLED_APPS by adding the following to support the newly installed packages:
+```
+'cloudinary_storage',
+'django.contrib.staticfiles',
+'cloudinary',
+'rest_framework',
+'django_filters',
+'rest_framework.authtoken',
+'dj_rest_auth',
+'django.contrib.sites',
+'allauth',
+'allauth.account',
+'allauth.socialaccount',
+'dj_rest_auth.registration',
+'corsheaders',
+```
+
+10. Import the database, the regular expression module & the env.py
+
+```
+from pathlib import Path
+import os
+import dj_database_url
+import re
+if os.path.exists('env.py'):
+        import env
+```
+
+11. Below the import statements, add the following variable for Cloudinary and below INSTALLED_APPS, set site ID:
+
+```
+CLOUDINARY_STORAGE = {'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL')}
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+```
+
+```
+SITE_ID = 1
+```
+
+12. Below BASE_DIR, create the REST_FRAMEWORK, and include page pagination to improve app loading times, pagination count, and date/time format and set the default renderer to JSON::
+
+```
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [(
+        'rest_framework.authentication.SessionAuthentication'
+        if 'DEV' in os.environ
+        else 'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+    )],
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DATETIME_FORMAT': '%d %b %Y',
+}
+if 'DEV' not in os.environ:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+```
+
+13. Then beneath that, added the following JWT code:
+```
+REST_USE_JWT = True
+JWT_AUTH_SECURE = True
+JWT_AUTH_COOKIE = 'my-app-auth'
+JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
+JWT_AUTH_SAMESITE = 'None'
+```
+
+14. Underneath JWT tokens, added:
+```
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'project-name.serializers.CurrentUserSerializer'
+}
+```
+
+15. Updated DEBUG variable:
+```
+DEBUG = 'DEV' in os.environ
+```
+
+16. Updated the DATABASES variable:
+```
+if 'DEV' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    }
+```
+
+17. Add heroku app to ALLOWED_HOSTS:
+```
+ALLOWED_HOSTS = [
+   os.environ.get('ALLOWED_HOST'),
+   '*',
+]
+```
+
+18. Added the CORS_ALLOWED variable as shown in DRF-API walkthrough:
+```
+if 'CLIENT_ORIGIN' in os.environ:
+    CORS_ALLOWED_ORIGINS = [
+        os.environ.get('CLIENT_ORIGIN')
+     ]
+if 'CLIENT_ORIGIN_DEV' in os.environ:
+    extracted_url = re.match(r'^.+-', os.environ.get('CLIENT_ORIGIN_DEV', ''), re.IGNORECASE).group(0)
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        rf"{extracted_url}(eu|us)\d+\w\.gitpod\.io$",
+    ]
+
+CORS_ALLOW_CREDENTIALS = True
+```
+
+19. Added corsheaders to the top of MIDDLEWARE:
+```
+    'corsheaders.middleware.CorsMiddleware',
+```
+
+### Final stage:
+
+20. Created a Procfile, & added the following two lines:
+```
+release: python manage.py makemigrations && python manage.py migrate
+web: gunicorn project-name.wsgi
+```
+
+21. Migrated the database:
+```
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+
+22. Save the requirements to requirements.txt with:
+```
+pip3 freeze --local > requirements.txt
+```
+
+23. Added, committed & pushed the changes to GitHub
+
+24. Navigated back to Heroku, to the ‘Deploy’ tab, and connected the app to the GitHub repository.
+
+25. Deployed the branch.
+
 
 ## **Credits**<span id="credits"><span>
 
-
-### **Content**<span id="content"><span>
-
-
-### **Media**<span id="media"><span>
+* The creation of this API database was done with the help of the C.I. DRF-API walkthrough project. This has been credited.
+* Some modifications have been made to the 'Profiles' & 'Posts' app models.
+* Three additional apps along with models, serializers & views have been created by me (events, articles, eventcomments).
